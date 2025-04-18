@@ -1,11 +1,11 @@
-// Fichier de test pour le projet Jeux d'échecs
-// Ce fichier contient les tests unitaires pour le projet Jeux d'échecs.
+ï»¿// Fichier de test pour le projet Jeux d'Ã©checs
+// Ce fichier contient les tests unitaires pour le projet Jeux d'Ã©checs.
 // Pour le moment, il y a seulement des tests d'exemple.
-// Vous devez ajouter vos propres tests pour vérifier le bon fonctionnement de votre code.
+// Vous devez ajouter vos propres tests pour vÃ©rifier le bon fonctionnement de votre code.
 // 
 // 
 //
-// Include ici les headers de votre partie de code à tester
+// Include ici les headers de votre partie de code Ã  tester
 
 #if __has_include("gtest/gtest.h")
 #include "gtest/gtest.h"

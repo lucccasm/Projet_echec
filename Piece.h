@@ -3,7 +3,6 @@
 #include <utility>
 
 namespace model {
-
 using Position = std::pair<int,int>;
 
 class Piece {
@@ -15,8 +14,7 @@ public:
     const Position& getPosition() const;
     void setPosition(const Position& p);
 
-private:
+protected:
     Position position;
 };
-
 } // namespace model

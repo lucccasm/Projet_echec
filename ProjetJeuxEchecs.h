@@ -4,6 +4,7 @@
 #include <memory>
 #include "Piece.h"
 #include <QtWidgets/QPushButton>
+#include <QtWidgets/QLabel>
 
 namespace gui {
 
@@ -15,20 +16,21 @@ public:
     ~ProjetJeuxEchecs() override;
 
 private slots:
-    void caseCliquee(int indice);
+    void caseCliquee(int idx);
 
 private:
     void initialiserPieces();
     void afficherPieces();
-    QString styleCase(int ligne, int colonne) const;
+    void afficherTour();
+    QString styleCase(int l, int c) const;
 
     static constexpr int dimension = 8;
-    std::vector<std::unique_ptr<model::Piece>> piecesEchecs;
+    std::vector<std::unique_ptr<model::Piece>> pieces;
     std::vector<QPushButton*> boutons;
-    int indiceSelection = -1;
+    QLabel* etiquetteTour;
+    int idxSelection = -1;
     bool tourBlanc = true;
     bool partieTerminee = false;
 };
 
 } // namespace gui
-
