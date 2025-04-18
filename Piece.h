@@ -17,4 +17,4 @@ public:
 protected:
     Position position;
 };
-} // namespace model
+}

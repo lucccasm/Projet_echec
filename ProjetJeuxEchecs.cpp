@@ -12,53 +12,70 @@
 #include "Pion.h"
 
 namespace gui {
+
 using model::Position;
 
+int ProjetJeuxEchecs::indexPieceEn(Position pos) const {
+    for(size_t i = 0; i < pieces.size(); ++i)
+        if(pieces[i]->getPosition() == pos) return int(i);
+    return -1;
+}
+bool ProjetJeuxEchecs::estBloqueEntre(Position src, Position dest) const {
+    int dr = (dest.first > src.first) ? 1 : (dest.first<src.first) ? - 1 : 0;
+    int dc = (dest.second > src.second) ? 1 : (dest.second < src.second) ? - 1 : 0;
+    Position cur = src;
+    while(cur != dest) {
+        cur.first += dr;
+        cur.second += dc;
+        if (cur != dest && indexPieceEn(cur) != -1) return true;
+    }
+    return false;
+}
+
 ProjetJeuxEchecs::ProjetJeuxEchecs(QWidget* parent)
-    : QMainWindow(parent), idxSelection(-1), tourBlanc(true), partieTerminee(false)
+    : QMainWindow(parent)
 {
     auto* central = new QWidget(this);
     setCentralWidget(central);
-    auto* layoutPrincipal = new QHBoxLayout(central);
-
-    auto* grille = new QGridLayout(); grille->setSpacing(0);
-    for (int r=0; r<dimension; ++r) {
-        for (int c=0; c<dimension; ++c) {
+    auto* layout = new QHBoxLayout(central);
+    auto* grille = new QGridLayout();
+    grille->setSpacing(0);
+    for(int r = 0; r < dimension; ++r) for (int c = 0; c < dimension; ++c) {
             auto* btn = new QPushButton(this);
-            btn->setFixedSize(60,60);
-            btn->setStyleSheet(styleCase(r,c));
+            btn->setFixedSize(60, 60);
+            btn->setStyleSheet(styleCase(r, c));
             grille->addWidget(btn, r, c);
-            int idx = r*dimension + c;
-            boutons.push_back(btn);
-            connect(btn, &QPushButton::clicked, this, [this,idx]{ caseCliquee(idx); });
+            int idx = r * dimension + c; boutons.push_back(btn);
+            connect(btn, &QPushButton::clicked, this, [this, idx]{caseCliquee(idx);});
         }
-    }
-    layoutPrincipal->addLayout(grille);
-
+    layout->addLayout(grille);
     auto* menu = new QVBoxLayout();
-    etiquetteTour = new QLabel(this);
-    etiquetteTour->setAlignment(Qt::AlignCenter);
-    menu->addWidget(etiquetteTour);
-    auto* btnNew = new QPushButton("Nouvelle Partie", this);
-    auto* btnQuit = new QPushButton("Quitter", this);
-    menu->addWidget(btnNew);
-    menu->addWidget(btnQuit);
+    etiquetteTour = new QLabel(this); etiquetteTour->setAlignment(Qt::AlignCenter);
+    menu-> addWidget(etiquetteTour);
+    QPushButton* newG = new QPushButton("Nouvelle Partie", this);
+    QPushButton* quit = new QPushButton("Quitter", this);
+    menu->addWidget(newG);
+    menu->addWidget(quit);
     menu->addStretch();
-    layoutPrincipal->addLayout(menu);
-
-    connect(btnNew, &QPushButton::clicked, this, [this]{
-        tourBlanc=true; partieTerminee=false; idxSelection=-1;
-        initialiserPieces(); afficherPieces(); afficherTour();
+    layout->addLayout(menu);
+    connect(newG, &QPushButton::clicked, this, [this]{
+        tourBlanc = true;
+        partieTerminee = false;
+        idxSelection=-1;
+        initialiserPieces();
+        afficherPieces();
+        afficherTour();
     });
-    connect(btnQuit, &QPushButton::clicked, this, &QMainWindow::close);
-
-    initialiserPieces(); afficherPieces(); afficherTour();
+    connect(quit, &QPushButton::clicked, this, &QMainWindow::close);
+    initialiserPieces();
+    afficherPieces();
+    afficherTour();
 }
 
 ProjetJeuxEchecs::~ProjetJeuxEchecs() = default;
 
-QString ProjetJeuxEchecs::styleCase(int l, int c) const {
-    return ((l+c)%2==0) ? "background-color:#EEE;" : "background-color:#555;";
+QString ProjetJeuxEchecs::styleCase(int l,int c) const {
+    return ((l + c) % 2 == 0) ? "background-color:#EEE;":"background-color:#555;";
 }
 
 void ProjetJeuxEchecs::afficherTour() {
@@ -68,180 +85,130 @@ void ProjetJeuxEchecs::afficherTour() {
 }
 
 void ProjetJeuxEchecs::initialiserPieces() {
-    pieces.clear();
-    // Blancs
-    pieces.emplace_back(std::make_unique<model::Tour>(Position{0,0}));
-    pieces.emplace_back(std::make_unique<model::Cavalier>(Position{0,1}));
-    pieces.emplace_back(std::make_unique<model::Fou>(Position{0,2}));
-    pieces.emplace_back(std::make_unique<model::Dame>(Position{0,3}));
-    pieces.emplace_back(std::make_unique<model::Roi>(Position{0,4}));
-    pieces.emplace_back(std::make_unique<model::Fou>(Position{0,5}));
-    pieces.emplace_back(std::make_unique<model::Cavalier>(Position{0,6}));
-    pieces.emplace_back(std::make_unique<model::Tour>(Position{0,7}));
-    for(int i=0; i<8; ++i)
-        pieces.emplace_back(std::make_unique<model::Pion>(Position{1,i}, true));
-    // Noirs
-    pieces.emplace_back(std::make_unique<model::Tour>(Position{7,0}));
-    pieces.emplace_back(std::make_unique<model::Cavalier>(Position{7,1}));
-    pieces.emplace_back(std::make_unique<model::Fou>(Position{7,2}));
-    pieces.emplace_back(std::make_unique<model::Dame>(Position{7,3}));
-    pieces.emplace_back(std::make_unique<model::Roi>(Position{7,4}));
-    pieces.emplace_back(std::make_unique<model::Fou>(Position{7,5}));
-    pieces.emplace_back(std::make_unique<model::Cavalier>(Position{7,6}));
-    pieces.emplace_back(std::make_unique<model::Tour>(Position{7,7}));
-    for(int i=0; i<8; ++i)
-        pieces.emplace_back(std::make_unique<model::Pion>(Position{6,i}, false));
+    pieces.clear(); estBlancVecteur.clear();
+
+    pieces.emplace_back(std::make_unique<model::Tour>(Position{0, 0})); estBlancVecteur.push_back(true);
+    pieces.emplace_back(std::make_unique<model::Cavalier>(Position{0, 1})); estBlancVecteur.push_back(true);
+    pieces.emplace_back(std::make_unique<model::Fou>(Position{0, 2})); estBlancVecteur.push_back(true);
+    pieces.emplace_back(std::make_unique<model::Dame>(Position{0, 3})); estBlancVecteur.push_back(true);
+    pieces.emplace_back(std::make_unique<model::Roi>(Position{0, 4})); estBlancVecteur.push_back(true);
+    pieces.emplace_back(std::make_unique<model::Fou>(Position{0, 5})); estBlancVecteur.push_back(true);
+    pieces.emplace_back(std::make_unique<model::Cavalier>(Position{0, 6})); estBlancVecteur.push_back(true);
+    pieces.emplace_back(std::make_unique<model::Tour>(Position{0, 7})); estBlancVecteur.push_back(true);
+    for (int i = 0; i < 8; ++i) {
+        pieces.emplace_back(std::make_unique<model::Pion>(Position{1, i},true));
+        estBlancVecteur.push_back(true);
+    }
+
+    pieces.emplace_back(std::make_unique<model::Tour>(Position{7, 0})); estBlancVecteur.push_back(false);
+    pieces.emplace_back(std::make_unique<model::Cavalier>(Position{7, 1})); estBlancVecteur.push_back(false);
+    pieces.emplace_back(std::make_unique<model::Fou>(Position{7, 2})); estBlancVecteur.push_back(false);
+    pieces.emplace_back(std::make_unique<model::Dame>(Position{7, 3})); estBlancVecteur.push_back(false);
+    pieces.emplace_back(std::make_unique<model::Roi>(Position{7, 4})); estBlancVecteur.push_back(false);
+    pieces.emplace_back(std::make_unique<model::Fou>(Position{7, 5})); estBlancVecteur.push_back(false);
+    pieces.emplace_back(std::make_unique<model::Cavalier>(Position{7, 6})); estBlancVecteur.push_back(false);
+    pieces.emplace_back(std::make_unique<model::Tour>(Position{7, 7})); estBlancVecteur.push_back(false);
+    for(int i = 0; i < 8; ++i) {
+        pieces.emplace_back(std::make_unique<model::Pion>(Position{6, i},false));
+        estBlancVecteur.push_back(false);
+    }
 }
 
 void ProjetJeuxEchecs::afficherPieces() {
-    // Réinitialiser chaque case
-    for (int i = 0; i < dimension*dimension; ++i) {
+
+    for(int i = 0; i < dimension * dimension; ++i){
         int r = i / dimension, c = i % dimension;
-        boutons[i]->setText("");
-        boutons[i]->setStyleSheet(styleCase(r, c));
+        boutons[i]->setText(""); boutons[i]->setStyleSheet(styleCase(r, c));
     }
 
-    // Afficher chaque pièce
-    for (size_t i = 0; i < pieces.size(); ++i) {
+    for(size_t i = 0; i < pieces.size(); ++i){
         auto [r, c] = pieces[i]->getPosition();
-        QPushButton* b = boutons[r*dimension + c];
-
-        // Choix de la lettre (toujours majuscule)
-        char lettre = '?';
-        if (dynamic_cast<model::Tour*>(pieces[i].get()))      lettre = 'T';
-        else if (dynamic_cast<model::Cavalier*>(pieces[i].get())) lettre = 'C';
-        else if (dynamic_cast<model::Fou*>(pieces[i].get()))      lettre = 'F';
-        else if (dynamic_cast<model::Dame*>(pieces[i].get()))     lettre = 'D';
-        else if (dynamic_cast<model::Roi*>(pieces[i].get()))      lettre = 'R';
-        else if (dynamic_cast<model::Pion*>(pieces[i].get()))     lettre = 'P';
-
-        // Déterminer la couleur du texte :
-        // Supposons que les 16 premières pièces du vecteur sont Blanches
-        bool estBlanc = (i < 16);
-        QString couleurTexte = estBlanc ? "white" : "black";
-
-        b->setText(QString(lettre));
-        b->setStyleSheet(
-            styleCase(r, c) +
-            QString("font-size:20px; color:%1;").arg(couleurTexte)
-            );
+        QPushButton* b = boutons[r * dimension + c];
+        char L = '?';
+        if (dynamic_cast<model::Tour*>(pieces[i].get()))          L='T';
+        else if (dynamic_cast<model::Cavalier*>(pieces[i].get())) L='C';
+        else if (dynamic_cast<model::Fou*>(pieces[i].get()))      L='F';
+        else if (dynamic_cast<model::Dame*>(pieces[i].get()))     L='D';
+        else if (dynamic_cast<model::Roi*>(pieces[i].get()))      L='R';
+        else if (dynamic_cast<model::Pion*>(pieces[i].get()))     L='P';
+        QString col = estBlancVecteur[i]?"white":"black";
+        b->setText(QString(L));
+        b->setStyleSheet(styleCase(r, c) + QString("font-size:20px; color:%1;").arg(col));
     }
 }
 
 void ProjetJeuxEchecs::caseCliquee(int idx) {
-    if (partieTerminee) return;
-
-    int r = idx / dimension;
-    int c = idx % dimension;
+    if(partieTerminee) return;
+    int r = idx / dimension, c = idx % dimension;
     Position clic{r, c};
-
-    if (idxSelection < 0) {
-        // === Phase de sélection ===
-        // On cherche l'indice de la pièce cliquée
-        for (size_t i = 0; i < pieces.size(); ++i) {
-            if (pieces[i]->getPosition() == clic) {
-                // Déterminer la couleur de la pièce :
-                // on assume les 16 premières sont Blanches
-                bool estBlanc = (i < 16);
-                if ((tourBlanc && estBlanc) || (!tourBlanc && !estBlanc)) {
-                    // OK, on sélectionne
-                    afficherPieces();
-                    afficherTour();
-                    idxSelection = idx;
-                    // bordure rouge sur la case sélectionnée
-                    boutons[idx]->setStyleSheet(
-                        boutons[idx]->styleSheet() + "border:2px solid red;"
-                        );
-                    // surligner déplacements possibles
-                    auto moves = pieces[i]->deplacementsValides();
-                    if (moves.empty()) {
-                        QMessageBox::warning(
-                            this,
-                            "Bloqué",
-                            "Cette pièce ne peut pas bouger."
-                            );
-                        idxSelection = -1;
-                    } else {
-                        for (auto& p : moves) {
-                            int id = p.first * dimension + p.second;
-                            boutons[id]->setStyleSheet(
-                                boutons[id]->styleSheet()
-                                + "border:2px solid green;"
-                                );
-                        }
-                    }
-                } else {
-                    // Mauvais tour
-                    QMessageBox::warning(
-                        this,
-                        "Tour",
-                        "Ce n'est pas votre tour !"
-                        );
-                }
-                return;
-            }
+    if (idxSelection < 0){
+        int pieceIdx = indexPieceEn(clic);
+        if (pieceIdx < 0) return;
+        if (estBlanc(pieceIdx) != tourBlanc){
+            QMessageBox::warning(this,"Tour","Ce n'est pas votre tour !");
+            return;
         }
-        // si on ne clique pas sur une pièce, on ne fait rien
-        return;
-    }
 
-    // === Phase de déplacement ===
-    // On retrouve la pièce sélectionnée
-    Position src { idxSelection / dimension, idxSelection % dimension };
-    size_t pieceIdx = 0;
-    for (; pieceIdx < pieces.size(); ++pieceIdx) {
-        if (pieces[pieceIdx]->getPosition() == src) break;
-    }
+        auto mouvementsInitiaux = pieces[pieceIdx]->deplacementsValides();
+        std::vector<Position> mouvements;
+        for (auto& m : mouvementsInitiaux) {
+            int occ = indexPieceEn(m);
+            if (occ != -1 && estBlanc(occ)==estBlanc(pieceIdx)) continue;
+            bool glisse = dynamic_cast<model::Tour*>(pieces[pieceIdx].get())
+                          || dynamic_cast<model::Fou*>(pieces[pieceIdx].get())
+                          || dynamic_cast<model::Dame*>(pieces[pieceIdx].get());
+            if (glisse && estBloqueEntre(clic,m)) continue;
+            mouvements.push_back(m);
+        }
+        if (mouvements.empty()){
+            QMessageBox::warning(this,"Bloqué","Cette pièce ne peut pas bouger.");
+            return;
+        }
 
-    // Récupérer ses déplacements valides
-    auto moves = pieces[pieceIdx]->deplacementsValides();
-    // Restauration du style de la case source
-    boutons[idxSelection]->setStyleSheet(
-        styleCase(src.first, src.second)
-        );
-
-    // Vérifier si dest est dans moves
-    if (std::find(moves.begin(), moves.end(), clic) == moves.end()) {
-        QMessageBox::warning(
-            this,
-            "Mouvement",
-            "Mouvement non valide pour cette pièce."
-            );
-        // on réaffiche tout sans changer de tour
         afficherPieces(); afficherTour();
-        idxSelection = -1;
-        return;
-    }
-
-    // Déplacement autorisé -> exécution
-    pieces[pieceIdx]->setPosition(clic);
-
-    // Vérifier capture du roi adverse
-    for (size_t j = 0; j < pieces.size(); ++j) {
-        if (j != pieceIdx && pieces[j]->getPosition() == clic) {
-            if (dynamic_cast<model::Roi*>(pieces[j].get())) {
-                QMessageBox::information(
-                    this,
-                    "Fin de partie",
-                    QString("Le joueur %1 a capturé le roi. Fin du jeu.")
-                        .arg(tourBlanc ? "Blanc" : "Noir")
-                    );
-                partieTerminee = true;
-            }
-            pieces.erase(pieces.begin() + j);
-            if (j < pieceIdx) --pieceIdx;
-            break;
+        idxSelection=idx;
+        boutons[idx]->setStyleSheet(boutons[idx]->styleSheet()+"border:2px solid red;");
+        for(auto& m:mouvements){int id=m.first*dimension+m.second;
+            boutons[id]->setStyleSheet(boutons[id]->styleSheet()+"border:2px solid green;");
         }
+
     }
+    else {
+        Position src{idxSelection/dimension,idxSelection%dimension};
+        int pieceIdx = indexPieceEn(src);
+        auto mouvementsInitiaux = pieces[pieceIdx]->deplacementsValides();
+        std::vector<Position> mouvements;
+        for(auto& m : mouvementsInitiaux){
+            int occ = indexPieceEn(m);
+            if (occ!=-1 && estBlanc(occ)==estBlanc(pieceIdx)) continue;
+            bool glisse = dynamic_cast<model::Tour*>(pieces[pieceIdx].get())
+                          || dynamic_cast<model::Fou*>(pieces[pieceIdx].get())
+                          || dynamic_cast<model::Dame*>(pieces[pieceIdx].get());
+            if (glisse && estBloqueEntre(src,m)) continue;
+            mouvements.push_back(m);
+        }
+        boutons[idxSelection]->setStyleSheet(styleCase(src.first,src.second));
+        if (std::find(mouvements.begin(),mouvements.end(),clic)==mouvements.end()){
+            QMessageBox::warning(this, "Mouvement","Non valide");
+        }
+        else {
+            int destOcc = indexPieceEn(clic);
+            if (destOcc != -1 && dynamic_cast<model::Roi*>(pieces[destOcc].get())){
+                QMessageBox::information(this,"Fin", "Roi capturé. Fin du jeu.");
+                partieTerminee=true;
+            }
+            if (destOcc != - 1) {
+                pieces.erase(pieces.begin()+destOcc); estBlancVecteur.erase(estBlancVecteur.begin()+destOcc);
+                if (destOcc<pieceIdx) --pieceIdx;
+            }
 
-    // Changer de tour
-    tourBlanc = !tourBlanc;
+            pieces[pieceIdx]->setPosition(clic);
+            tourBlanc =! tourBlanc;
+            afficherPieces(); afficherTour();
+        }
 
-    // Refresh
-    afficherPieces();
-    afficherTour();
-    idxSelection = -1;
+        idxSelection=-1;
+    }
 }
 
-} // namespace gui
-
+}

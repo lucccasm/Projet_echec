@@ -4,14 +4,16 @@
 
 namespace model {
 
+Dame::Dame(const Position& pos) : Piece(pos) {}
+
 std::vector<Position> Dame::deplacementsValides() const {
-    // Combine Rook and Bishop
-    std::vector<Position> m;
-    auto rook = Tour(position).deplacementsValides();
-    auto bishop = Fou(position).deplacementsValides();
-    m.insert(m.end(), rook.begin(), rook.end());
-    m.insert(m.end(), bishop.begin(), bishop.end());
-    return m;
+
+    std::vector<Position> mouvements;
+    auto tour = Tour(position).deplacementsValides();
+    auto fou = Fou(position).deplacementsValides();
+    mouvements.insert(mouvements.end(), tour.begin(), tour.end());
+    mouvements.insert(mouvements.end(), fou.begin(), fou.end());
+    return mouvements;
 }
 
-} // namespace model
+}

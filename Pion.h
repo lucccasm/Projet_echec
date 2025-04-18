@@ -12,5 +12,4 @@ private:
     bool blanc;
 };
 
-} // namespace model
-
+}

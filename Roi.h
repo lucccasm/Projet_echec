@@ -18,4 +18,4 @@ public:
 private:
     static int compteurInstances;
 };
-} // namespace model
+}

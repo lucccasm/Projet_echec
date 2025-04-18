@@ -12,4 +12,4 @@ DeplacementTemporaire::~DeplacementTemporaire() {
     piece.setPosition(anciennePos);
 }
 
-} // namespace model
+}

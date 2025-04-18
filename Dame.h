@@ -5,8 +5,8 @@ namespace model {
 
 class Dame : public Piece {
 public:
-    explicit Dame(const Position& pos) : Piece(pos) {}
+    explicit Dame(const Position& pos);
     std::vector<Position> deplacementsValides() const override;
 };
 
-} // namespace model
+}

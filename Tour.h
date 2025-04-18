@@ -5,9 +5,9 @@ namespace model {
 
 class Tour : public Piece {
 public:
-    explicit Tour(const Position& pos) : Piece(pos) {}
+    explicit Tour(const Position& pos);
     std::vector<Position> deplacementsValides() const override;
 };
 
-} // namespace model
+}
 

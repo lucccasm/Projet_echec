@@ -2,10 +2,7 @@
 
 namespace model {
 
-Piece::Piece(const Position& pos)
-    : position(pos)
-{
-}
+Piece::Piece(const Position& pos) : position(pos) {}
 
 Piece::~Piece() = default;
 
@@ -17,4 +14,4 @@ void Piece::setPosition(const Position& p) {
     position = p;
 }
 
-} // namespace model
+}
