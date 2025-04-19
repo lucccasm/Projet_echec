@@ -1,3 +1,12 @@
+/*
+Projet final
+
+Noms: Lucas Montpetit, Jacob Desaulniers
+
+Description : Ce document est la description de la classe Roi, les mouvements de cette pièce ont été spécifiés.
+               De cette façon, le mouvement du roi est propre à lui-même et ne peut pas être confondu avec un autre type de pièce.
+*/
+
 #include "Roi.h"
 
 namespace model {

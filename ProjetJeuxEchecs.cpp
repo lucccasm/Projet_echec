@@ -1,4 +1,15 @@
-﻿#include "ProjetJeuxEchecs.h"
+﻿/*
+Projet final
+
+Noms: Lucas Montpetit, Jacob Desaulniers
+
+Description : Ce document est le coeur du projet, il contient la classe ProjetJeuxEchecs qui est la classe principale de l'application.
+			  Cette classe gère l'interface graphique et la logique du jeu d'échecs. Avec ce fichier, il est possible d'avoir une multitude
+			  de fonctionnalités, ça permet de savoir si c'est le tour du joueur blanc ou noir, de savoir si une pièce est bloquée, 
+              de savoir si une case est cliquée.
+*/
+
+#include "ProjetJeuxEchecs.h"
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QVBoxLayout>
