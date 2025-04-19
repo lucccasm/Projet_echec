@@ -2,38 +2,46 @@
 
 namespace model {
 
-RoiException::RoiException(const char* msg): std::runtime_error(msg){}
+RoiException::RoiException(const char* message) : std::runtime_error(message) {}
 
-int Roi::compteurInstances = 0;
+int Roi::nombreInstances = 0;
 
-Roi::Roi(const Position& pos): Piece(pos)
+Roi::Roi(const Position& positionInitiale) : Piece(positionInitiale)
 {
-    if (++compteurInstances > 2) {
-        --compteurInstances;
-        throw RoiException("Trop de rois instanciés");
+    if (++nombreInstances > 2) {
+        --nombreInstances;
+        throw RoiException("Impossible de créer plus de deux rois");
     }
 }
 
-Roi::~Roi() {
-    --compteurInstances;
+Roi::~Roi()
+{
+    --nombreInstances;
 }
 
-std::vector<Position> Roi::deplacementsValides() const {
-    std::vector<Position> mouvements;
-    auto [r,c] = position;
+std::vector<Position> Roi::deplacementsValides() const
+{
+    std::vector<Position> deplacements;
+    auto [ligneActuelle, colonneActuelle] = positionActuelle;
 
-    for (int dr = -1; dr <= 1; ++dr) {
-        for (int dc =- 1; dc <= 1; ++dc) {
-            if (dr == 0 && dc == 0) continue;
-            int nr = r + dr;
-            int nc = c + dc;
-            if (nr >= 0 && nr < 8 && nc >= 0 && nc < 8) {
-                mouvements.emplace_back(nr,nc);
+    for (int decalageLigne = -1; decalageLigne <= 1; ++decalageLigne) {
+        for (int decalageColonne = -1; decalageColonne <= 1; ++decalageColonne) {
+            if (decalageLigne == 0 && decalageColonne == 0)
+                continue;
+
+            int nouvelleLigne   = ligneActuelle + decalageLigne;
+            int nouvelleColonne = colonneActuelle + decalageColonne;
+
+            if (nouvelleLigne >= 0 && nouvelleLigne < 8
+                && nouvelleColonne >= 0 && nouvelleColonne < 8) {
+                deplacements.emplace_back(
+                    nouvelleLigne,
+                    nouvelleColonne
+                );
             }
         }
     }
-
-    return mouvements;
+    return deplacements;
 }
 
 }

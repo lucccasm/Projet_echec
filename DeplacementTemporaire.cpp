@@ -2,14 +2,15 @@
 
 namespace model {
 
-DeplacementTemporaire::DeplacementTemporaire(Piece& p, const Position& nouvellePos)
-    : piece(p), anciennePos(p.getPosition())
+DeplacementTemporaire::DeplacementTemporaire(Piece& piece, const Position& positionTemporaire )
+    : pieceReference(piece), positionOriginale(piece.obtenirPosition())
 {
-    piece.setPosition(nouvellePos);
+    pieceReference.definirPosition(positionTemporaire);
 }
 
-DeplacementTemporaire::~DeplacementTemporaire() {
-    piece.setPosition(anciennePos);
+DeplacementTemporaire::~DeplacementTemporaire()
+{
+    pieceReference.definirPosition(positionOriginale);
 }
 
 }

@@ -2,18 +2,18 @@
 
 namespace model {
 
-Tour::Tour(const Position& pos) : Piece(pos) {}
+Tour::Tour(const Position& positionInitiale) : Piece(positionInitiale) {}
 
-std::vector<Position> Tour::deplacementsValides() const {
-    std::vector<Position> mouvements;
-    auto [r,c] = position;
+std::vector<Position> Tour::deplacementsValides() const
+{
+    std::vector<Position> deplacements;
+    auto [ligneActuelle, colonneActuelle] = positionActuelle;
 
     for (int i = 0; i < 8; ++i) {
-        if (i != r) mouvements.emplace_back(i, c);
-        if (i != c) mouvements.emplace_back(r, i);
+        if (i != ligneActuelle) deplacements.emplace_back(i, colonneActuelle);
+        if (i != colonneActuelle) deplacements.emplace_back(ligneActuelle, i);
     }
-
-    return mouvements;
+    return deplacements;
 }
 
 }

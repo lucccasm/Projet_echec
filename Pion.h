@@ -5,11 +5,11 @@ namespace model {
 
 class Pion : public Piece {
 public:
-    Pion(const Position& pos, bool estBlanc);
+    Pion(const Position& positionInitiale, bool estBlanche);
     std::vector<Position> deplacementsValides() const override;
 
 private:
-    bool blanc;
+    bool estBlanche;
 };
 
 }

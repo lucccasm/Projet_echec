@@ -2,16 +2,18 @@
 
 namespace model {
 
-Piece::Piece(const Position& pos) : position(pos) {}
+Piece::Piece(const Position& positionInitiale): positionActuelle(positionInitiale) {}
 
 Piece::~Piece() = default;
 
-const Position& Piece::getPosition() const {
-    return position;
+const Position& Piece::obtenirPosition() const
+{
+    return positionActuelle;
 }
 
-void Piece::setPosition(const Position& p) {
-    position = p;
+void Piece::definirPosition(const Position& nouvellePosition)
+{
+    positionActuelle = nouvellePosition;
 }
 
 }

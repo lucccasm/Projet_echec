@@ -4,16 +4,19 @@
 
 namespace model {
 
-Dame::Dame(const Position& pos) : Piece(pos) {}
+Dame::Dame(const Position& positionInitiale) : Piece(positionInitiale) {}
 
-std::vector<Position> Dame::deplacementsValides() const {
+std::vector<Position> Dame::deplacementsValides() const
+{
+    std::vector<Position> mouvementsTour = Tour(positionActuelle).deplacementsValides();
+    std::vector<Position> mouvementsFou  = Fou(positionActuelle).deplacementsValides();
 
-    std::vector<Position> mouvements;
-    auto tour = Tour(position).deplacementsValides();
-    auto fou = Fou(position).deplacementsValides();
-    mouvements.insert(mouvements.end(), tour.begin(), tour.end());
-    mouvements.insert(mouvements.end(), fou.begin(), fou.end());
-    return mouvements;
+    mouvementsTour.insert(
+        mouvementsTour.end(),
+        mouvementsFou.begin(),
+        mouvementsFou.end()
+    );
+    return mouvementsTour;
 }
 
 }

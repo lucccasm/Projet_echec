@@ -5,12 +5,12 @@ namespace model {
 
 class DeplacementTemporaire {
 public:
-    DeplacementTemporaire(Piece& p, const Position& nouvellePos);
+    DeplacementTemporaire(Piece& piece, const Position& positionTemporaire);
     ~DeplacementTemporaire();
 
 private:
-    Piece& piece;
-    Position anciennePos;
+    Piece& pieceReference;
+    Position  positionOriginale;
 };
 
 }
