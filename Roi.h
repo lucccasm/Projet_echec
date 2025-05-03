@@ -28,7 +28,9 @@ public:
     std::vector<Position> deplacementsValides() const override;
 
 private:
-    static int nombreInstances_;
+    static int nombreTotal_;
+    static int nombreBlanc_;
+    static int nombreNoir_;
 };
 
 }

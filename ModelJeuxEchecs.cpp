@@ -19,27 +19,13 @@ void ModelJeuxEchecs::ajouterRoiSiValide(const Position& pos, bool estBlanc)
     if (!positionValide) {
         emit erreurRoi(
             QString("Position ou couleur de roi invalide : (%1,%2)")
-                .arg(pos.first)
-                .arg(pos.second)
+                .arg(pos.first).arg(pos.second)
             );
         return;
     }
 
-    for (auto& p : pieces_) {
-        if (auto r = dynamic_cast<Roi*>(p.get()); r && r->obtenirEstBlanc() == estBlanc) {
-            emit erreurRoi(
-                estBlanc
-                    ? "Un roi blanc existe déjà."
-                    : "Un roi noir existe déjà."
-                );
-            return;
-        }
-    }
-
     try {
-        auto p = std::make_unique<Roi>(pos, estBlanc);
-        pieces_.push_back(std::move(p));
-
+        pieces_.push_back(std::make_unique<Roi>(pos, estBlanc));
     }
     catch (const RoiException& e) {
         emit erreurRoi(QString::fromStdString(e.what()));

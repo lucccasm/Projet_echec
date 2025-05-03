@@ -14,19 +14,38 @@ namespace model {
 
 RoiException::RoiException(const char* message) : std::runtime_error(message) {}
 
-int Roi::nombreInstances_ = 0;
+int Roi::nombreTotal_ = 0;
+int Roi::nombreBlanc_ = 0;
+int Roi::nombreNoir_  = 0;
 
 Roi::Roi(const Position& positionInitiale, const bool& estBlanc) : Piece(positionInitiale, estBlanc)
 {
-    if (++nombreInstances_ > 2) {
-        --nombreInstances_;
-        throw RoiException("Impossible de créer plus de deux rois");
+    if (++nombreTotal_ > 2) {
+    --nombreTotal_;
+    throw RoiException("Impossible de créer plus de deux rois");
+    }
+    if (obtenirEstBlanc()) {
+        if (++nombreBlanc_ > 1) {
+            --nombreBlanc_;
+            --nombreTotal_;
+            throw RoiException("Impossible de créer plus d'un roi blanc");
+        }
+    }
+
+    else {
+        if (++nombreNoir_ > 1) {
+            --nombreNoir_;
+            --nombreTotal_;
+            throw RoiException("Impossible de créer plus d'un roi noir");
+        }
     }
 }
 
 Roi::~Roi()
 {
-    --nombreInstances_;
+    --nombreTotal_;
+    if (obtenirEstBlanc()) --nombreBlanc_;
+    else --nombreNoir_;
 }
 
 std::vector<Position> Roi::deplacementsValides() const
