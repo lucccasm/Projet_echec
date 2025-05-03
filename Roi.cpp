@@ -1,3 +1,4 @@
+
 /*
 Projet final
 
@@ -13,25 +14,25 @@ namespace model {
 
 RoiException::RoiException(const char* message) : std::runtime_error(message) {}
 
-int Roi::nombreInstances = 0;
+int Roi::nombreInstances_ = 0;
 
-Roi::Roi(const Position& positionInitiale) : Piece(positionInitiale)
+Roi::Roi(const Position& positionInitiale, const bool& estBlanc) : Piece(positionInitiale, estBlanc)
 {
-    if (++nombreInstances > 2) {
-        --nombreInstances;
+    if (++nombreInstances_ > 2) {
+        --nombreInstances_;
         throw RoiException("Impossible de créer plus de deux rois");
     }
 }
 
 Roi::~Roi()
 {
-    --nombreInstances;
+    --nombreInstances_;
 }
 
 std::vector<Position> Roi::deplacementsValides() const
 {
     std::vector<Position> deplacements;
-    auto [ligneActuelle, colonneActuelle] = positionActuelle;
+    auto [ligneActuelle, colonneActuelle] = obtenirPosition();
 
     for (int decalageLigne = -1; decalageLigne <= 1; ++decalageLigne) {
         for (int decalageColonne = -1; decalageColonne <= 1; ++decalageColonne) {
@@ -46,7 +47,7 @@ std::vector<Position> Roi::deplacementsValides() const
                 deplacements.emplace_back(
                     nouvelleLigne,
                     nouvelleColonne
-                );
+                    );
             }
         }
     }

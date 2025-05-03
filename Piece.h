@@ -3,12 +3,12 @@ Projet final
 
 Noms: Lucas Montpetit, Jacob Desaulniers
 
-Description : Ce document est la description de la classe Pièce. La pièce a donc une position
-                initiale et une position actuelle. La pièce est la classe mère de toutes les pièces.
+Description : Ce document est la description de la classe PiÃ¨ce. La piÃ¨ce a donc une position
+                initiale et une position actuelle. La piÃ¨ce est la classe mÃ¨re de toutes les piÃ¨ces.
 */
 
-// ATTENTION : Il semble que beaucoup de warnings apparaissent dans les fichiers .h car puisque mon coéquipier a utilisé QtCreator
-//             pour faire le projet, les fichiers ne sont pas bien répartis, ce qui, je pense , cause les warnings.
+// ATTENTION : Il semble que beaucoup de warnings apparaissent dans les fichiers .h car puisque mon coÃ©quipier a utilisÃ© QtCreator
+//             pour faire le projet et moi VS, les fichiers ne sont pas bien rÃ©partis, ce qui, je pense , cause les warnings.
 
 
 #pragma once
@@ -20,14 +20,16 @@ using Position = std::pair<int, int>;
 
 class Piece {
 public:
-    explicit Piece(const Position& positionInitiale);
+    explicit Piece(const Position& positionInitiale, const bool& estBlanc);
     virtual ~Piece();
 
     virtual std::vector<Position> deplacementsValides() const = 0;
     const Position& obtenirPosition() const;
+    const bool& obtenirEstBlanc() const;
     void definirPosition(const Position& nouvellePosition);
 
-protected:
-    Position positionActuelle;
+private:
+    Position positionActuelle_;
+    bool estBlanc_;
 };
 }

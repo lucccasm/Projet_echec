@@ -3,8 +3,8 @@ Projet final
 
 Noms: Lucas Montpetit, Jacob Desaulniers
 
-Description : Ce document décrit la classe DeplacementTemporaire, qui est utilisée pour déplacer temporairement une pièce sur l'échiquier.
-			  À l'aide du RAII, on l'utilise pour simuler un mouvement de pièce sans affecter la position réelle de la pièce, pour ensuite vérifier si 
+Description : Ce document dÃ©crit la classe DeplacementTemporaire, qui est utilisÃ©e pour dÃ©placer temporairement une piÃ¨ce sur l'Ã©chiquier.
+              Ã€ l'aide du RAII, on l'utilise pour simuler un mouvement de piÃ¨ce sans affecter la position rÃ©elle de la piÃ¨ce, pour ensuite vÃ©rifier si
               le mouvement est valide.
 */
 
@@ -13,14 +13,14 @@ Description : Ce document décrit la classe DeplacementTemporaire, qui est utilis
 namespace model {
 
 DeplacementTemporaire::DeplacementTemporaire(Piece& piece, const Position& positionTemporaire )
-    : pieceReference(piece), positionOriginale(piece.obtenirPosition())
+    : pieceReference_(piece), positionOriginale_(piece.obtenirPosition())
 {
-    pieceReference.definirPosition(positionTemporaire);
+    pieceReference_.definirPosition(positionTemporaire);
 }
 
 DeplacementTemporaire::~DeplacementTemporaire()
 {
-    pieceReference.definirPosition(positionOriginale);
+    pieceReference_.definirPosition(positionOriginale_);
 }
 
 }

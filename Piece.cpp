@@ -3,26 +3,32 @@ Projet final
 
 Noms: Lucas Montpetit, Jacob Desaulniers
 
-Description : Ce document est la description de la classe Pièce. La pièce a donc une position
-				initiale et une position actuelle. La pièce est la classe mère de toutes les pièces.
+Description : Ce document est la description de la classe PiÃ¨ce. La piÃ¨ce a donc une position
+                initiale et une position actuelle. La piÃ¨ce est la classe mÃ¨re de toutes les piÃ¨ces.
 */
 
 #include "Piece.h"
 
 namespace model {
 
-Piece::Piece(const Position& positionInitiale): positionActuelle(positionInitiale) {}
+Piece::Piece(const Position& positionInitiale, const bool& estBlanc)
+    : positionActuelle_(positionInitiale),estBlanc_(estBlanc) {}
 
 Piece::~Piece() = default;
 
 const Position& Piece::obtenirPosition() const
 {
-    return positionActuelle;
+    return positionActuelle_;
+}
+
+const bool& Piece::obtenirEstBlanc() const
+{
+    return estBlanc_;
 }
 
 void Piece::definirPosition(const Position& nouvellePosition)
 {
-    positionActuelle = nouvellePosition;
+    positionActuelle_ = nouvellePosition;
 }
 
 }
