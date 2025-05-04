@@ -20,6 +20,8 @@ public:
     explicit ModelJeuxEchecs(QObject* parent = nullptr);
 
     void nouvellePartie();
+    void nouvellePartieRapide();
+
     std::optional<size_t> obtenirIndice(const Position& pos) const;
     std::vector<Position> deplacementsLegaux(const Position& src) const;
     StatutMouvement deplacer(const Position& src, const Position& dest);

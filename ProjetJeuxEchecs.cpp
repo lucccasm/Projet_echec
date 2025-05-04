@@ -20,6 +20,7 @@ Description : Ce document est le coeur du projet, il contient la classe ProjetJe
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QMessageBox>
+#include <QInputDialog>
 
 namespace gui {
 
@@ -53,21 +54,13 @@ ProjetJeuxEchecs::ProjetJeuxEchecs(QWidget* parent): QMainWindow(parent), modele
     menu->addWidget(btnNew); menu->addWidget(btnQuit); menu->addStretch();
     layout->addLayout(menu);
 
+    connect(btnNew, &QPushButton::clicked, this, &ProjetJeuxEchecs::nouveauJeuClic);
+    connect(btnQuit, &QPushButton::clicked, this, &QMainWindow::close);
+
     connect(&modele_, &model::ModelJeuxEchecs::erreurRoi,
             this, [this](const QString& msg){
                 QMessageBox::warning(this, "Erreur création Roi", msg);
             });
-
-
-    auto lambdaNouvellePartie = [this]() {
-        modele_.nouvellePartie();
-        indiceSelection = -1;
-        afficherPieces();
-        afficherTour();
-    };
-
-    connect(btnNew, &QPushButton::clicked, this, lambdaNouvellePartie);
-    connect(btnQuit, &QPushButton::clicked,this, &QMainWindow::close);
 
     connect(&modele_, &model::ModelJeuxEchecs::partieInitialisee,
             this, &ProjetJeuxEchecs::partieInitialisee);
@@ -93,7 +86,25 @@ ProjetJeuxEchecs::ProjetJeuxEchecs(QWidget* parent): QMainWindow(parent), modele
                 QMessageBox::information(this, "Échec et mat", msg);
             });
 
-    lambdaNouvellePartie();
+    nouveauJeuClic();
+}
+
+void ProjetJeuxEchecs::nouveauJeuClic() {
+    QStringList modes;
+    modes << "Standard" << "Rapide";
+    bool ok;
+    QString choix = QInputDialog::getItem(this, tr("Nouveau jeu"), tr("Mode de jeu:"), modes, 0, false, &ok);
+    if (!ok) return;
+
+    if (choix == "Standard") {
+        modele_.nouvellePartie();
+    } else {
+        modele_.nouvellePartieRapide();
+    }
+
+    indiceSelection = -1;
+    afficherPieces();
+    afficherTour();
 }
 
 void ProjetJeuxEchecs::partieInitialisee()
@@ -212,12 +223,10 @@ void ProjetJeuxEchecs::caseCliquee(int idxCase)
 
         if (estLegal) {
             if (modele_.metEnEchecPropreRoi(src, clic)) {
-                boutonsCases[idxCase]->setStyleSheet(
-                    boutonsCases[idxCase]->styleSheet()
-                    + "border:2px solid red;"
-                    );
+                QMessageBox::warning(this, "Échec", "Ce mouvement met votre roi en échec.");
+            } else {
+                modele_.deplacer(src, clic);
             }
-            modele_.deplacer(src, clic);
         }
         else {
             QMessageBox::warning(this, "Impossible",

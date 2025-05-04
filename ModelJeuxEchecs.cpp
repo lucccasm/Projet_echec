@@ -1,11 +1,12 @@
 #include "ModelJeuxEchecs.h"
-#include "DeplacementTemporaire.h"
 #include "Tour.h"
 #include "Cavalier.h"
 #include "Fou.h"
 #include "Dame.h"
 #include "Roi.h"
 #include "Pion.h"
+#include <random>
+#include <algorithm>
 
 namespace model {
 
@@ -63,6 +64,52 @@ void ModelJeuxEchecs::nouvellePartie()
     pieces_.push_back(std::make_unique<Fou>(Position{7,5}, true));
     pieces_.push_back(std::make_unique<Cavalier>(Position{7,6}, true));
     pieces_.push_back(std::make_unique<Tour>(Position{7,7}, true));
+
+    ajouterRoiSiValide({7,4}, true);
+
+    emit partieInitialisee();
+}
+
+void ModelJeuxEchecs::nouvellePartieRapide() {
+    pieces_.clear();
+    tourBlanc_ = true;
+    partieTerminee_ = false;
+
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> dist(0, 7);
+
+    auto positionAleatoire = [&]() {
+        Position pos;
+        do {
+            pos.first  = dist(gen);
+            pos.second = dist(gen);
+        } while (obtenirIndice(pos).has_value());
+        return pos;
+    };
+
+    std::vector<std::function<std::unique_ptr<Piece>(const Position&, bool)>> pieces = {
+        [](const Position& p, bool c){ return std::make_unique<Tour>(p, c);    },
+        [](const Position& p, bool c){ return std::make_unique<Cavalier>(p, c);},
+        [](const Position& p, bool c){ return std::make_unique<Fou>(p, c);     },
+        [](const Position& p, bool c){ return std::make_unique<Dame>(p, c);    },
+        [](const Position& p, bool c){ return std::make_unique<Pion>(p, c);    }
+    };
+
+    for (bool couleur : {false, true, false}) {
+
+        try {
+            pieces_.push_back(std::make_unique<Roi>(positionAleatoire(), couleur));
+        } catch (const RoiException& e) {
+            emit erreurRoi(QString::fromStdString(e.what()));
+        }
+
+
+        std::shuffle(pieces.begin(), pieces.end(), gen);
+        for (int i = 0; i < 2; ++i) {
+            pieces_.push_back(pieces[i](positionAleatoire(), couleur));
+        }
+    }
 
     emit partieInitialisee();
 }

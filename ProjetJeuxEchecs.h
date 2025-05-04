@@ -31,15 +31,16 @@ private slots:
     void tourChangee(bool tourBlanc);
     void partieTermineeSignal();
     void caseCliquee(int idxCase);
+    void nouveauJeuClic();
 
 private:
     void afficherPieces();
     void afficherTour();
     QString styleCase(int l,int c) const;
-    static constexpr int TAILLE_ECHIQUIER=8;
+    static constexpr int TAILLE_ECHIQUIER = 8;
     model::ModelJeuxEchecs modele_;
     std::vector<QPushButton*> boutonsCases;
-    QLabel* etiquetteDuTour=nullptr;
-    int indiceSelection=-1;
+    QLabel* etiquetteDuTour = nullptr;
+    int indiceSelection =- 1;
 };
 }
